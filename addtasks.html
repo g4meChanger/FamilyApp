@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Task</title>
+    <style>
+        html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden; /* Prevent horizontal scrolling */
+    width: 100%; /* Ensure the page width is 100% */
+}
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            background-color: #f1f1f1;
+            padding: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .menu-icon {
+            font-size: 24px;
+            margin-right: 10px;
+            cursor: pointer;
+        }
+        .title {
+            font-size: 20px;
+            font-weight: bold;
+        }
+        .content {
+            padding: 20px;
+        }
+        .form-group {
+            padding: 15px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #ddd;
+        }
+        .form-group-full {
+            padding: 15px 0;
+            border-bottom: 1px solid #ddd;
+        }
+        .form-group-full label {
+            display: block;
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .form-group-full input,
+        .form-group-full textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .form-group-full textarea {
+            resize: vertical;
+            height: 100px;
+        }
+        .select-btn {
+            background: none;
+            border: none;
+            color: #00a7a7;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .select-btn:hover {
+            color: #008080;
+        }
+        .date-display {
+            background-color: #f1f1f1;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px 15px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            color: #555;
+            text-align: center;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        .date-display:hover {
+            background-color: #007BFF;
+            color: white;
+        }
+        .date-input {
+            display: none;
+        }
+        .save-btn {
+            width: 100%;
+            padding: 15px;
+            margin-top: 20px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .save-btn:hover {
+            background-color: #0056b3;
+        }
+        .time-picker {
+            margin-top: 10px;
+            display: none;
+        }
+        .time-picker input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            width: 80%;
+            max-width: 400px;
+            text-align: center;
+        }
+        .modal-content ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .modal-content ul li {
+            padding: 10px;
+            margin: 5px 0;
+            background-color: #f1f1f1;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .modal-content ul li:hover {
+            background-color: #007BFF;
+            color: white;
+        }
+        .close-btn {
+            margin-top: 10px;
+            padding: 10px 20px;
+            background-color: red;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .footer {
+            position: fixed;
+            bottom: 10px; /* Moved the footer up by 20px */
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            background-color: #f1f1f1;
+            padding: 10px 0;
+            box-shadow: 0 -3px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .footer a {
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .footer a:hover i {
+            color: #007BFF; /* Hover effect for icon */
+        }
+        .footer a:hover span {
+            color: #007BFF; /* Hover effect for text */
+        }
+        .footer-icon {
+            text-align: center;
+            font-size: 20px;
+        }
+        .footer-icon i {
+            display: block;
+            margin-bottom: 5px;
+        }
+        @media (max-width: 600px) {
+            .footer-icon {
+                font-size: 18px;
+            }
+        }
+        /* Toggle switch styling */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 34px;
+            height: 20px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: 0.4s;
+            border-radius: 20px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 14px;
+            width: 14px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: 0.4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #007BFF;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(14px);
+        }
+
+        /* New styling for frequency input */
+        .frequency-container {
+            display: none;
+            margin-top: 10px;
+        }
+        .frequency-container input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+</head>
+<body>
+
+    <div class="header">
+        <i class="fas fa-bars menu-icon"></i>
+        <div class="title">Add Task</div>
+    </div>
+
+    <div class="content">
+        <form id="addTaskForm">
+            <div class="form-group-full">
+                <label for="taskTitle">Title</label>
+                <input type="text" id="taskTitle" placeholder="Enter task title" required>
+            </div>
+            <div class="form-group-full">
+                <label for="taskNotes">Notes (Optional)</label>
+                <textarea id="taskNotes" placeholder="Enter any additional notes"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Room</label>
+                <button type="button" id="selectRoom" class="select-btn">Select</button>
+                <input type="hidden" id="roomSelection" value="">
+            </div>
+            <div class="form-group">
+                <label>Repeat</label>
+                <button type="button" id="selectRepeat" class="select-btn">Select</button>
+                <input type="hidden" id="repeatSelection" value="">
+            </div>
+            <div class="form-group">
+                <label>Settings</label>
+                <button type="button" id="selectSettings" class="select-btn">Select</button>
+                <input type="hidden" id="settingsSelection" value="">
+            </div>
+            <div class="form-group">
+                <label>Date</label>
+                <div id="dateDisplay" class="date-display">Today</div>
+                <input type="text" id="taskDate" class="date-input">
+            </div>
+            <div class="form-group">
+                <label>Reminder</label>
+                <label class="switch">
+                    <input type="checkbox" id="taskReminder">
+                    <span class="slider"></span>
+                </label>
+                <button type="button" id="addAlarmBtn" class="select-btn" style="display: none; margin-left: 10px;">+ Add Alarm</button>
+            </div>
+            <div id="alarmContainer" style="margin-top: 10px;"></div>
+
+            <!-- Frequency input for Daily, Weekly, Monthly repetition -->
+            <div id="frequencyContainer" class="frequency-container">
+                <label for="frequencyInput">xTimes</label>
+                <input type="number" id="frequencyInput" placeholder="Enter frequency (e.g., 2)" min="1">
+            </div>
+
+            <!-- Assigned to: moved here after Reminder -->
+            <div class="form-group">
+                <label>
+                <span id="assignedToDisplay" class="select-btn">Select users</span>
+                <input type="hidden" id="assignedToSelection" value="">
+            </label>
+            </div>
+
+            <div class="form-group">
+                <label>
+                    <span id="selectReward" class="select-btn">Reward</span>
+                    <input type="hidden" id="RewardValue" value="">
+                </label>
+                <div class="modal" id="rewardModal">
+                    <div class="modal-content fancy-modal">
+                        <h3>Reward 💎</h3>
+                        <input type="number" id="rewardInput" placeholder="Enter diamonds" min="1" class="fancy-input smaller-input">
+                        <div style="margin-top: 10px;">
+                            <button id="saveRewardBtn" class="btn btn-save">Save</button>
+                            <button id="closeRewardModal" class="btn btn-cancel">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <style>
+                /* Fancy Modal */
+                .fancy-modal {
+                    background: #fff;
+                    border: 1px solid #ddd;
+                    border-radius: 16px;
+                    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+                    padding: 20px;
+                    animation: slideIn 0.3s ease-out;
+                    position: relative;
+                    text-align: center;
+                    max-width: 300px; /* Ensure modal size is contained */
+                    margin: 0 auto;
+                }
+            
+                /* Animation for Modal */
+                @keyframes slideIn {
+                    from {
+                        opacity: 0;
+                        transform: scale(0.9);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: scale(1);
+                    }
+                }
+            
+                /* Fancy Input */
+                .fancy-input {
+                    padding: 8px 12px; /* Reduced padding */
+                    font-size: 14px; /* Smaller text size */
+                    border: 2px solid transparent;
+                    border-radius: 8px;
+                    background: #f9f9f9;
+                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                    transition: border-color 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+                }
+            
+                .smaller-input {
+                    width: 80%; /* Adjust input width to fit modal */
+                    margin: 0 auto; /* Center the input */
+                }
+            
+                .fancy-input:focus {
+                    border-color: #6a11cb;
+                    box-shadow: 0 4px 12px rgba(106, 17, 203, 0.4);
+                    outline: none;
+                    background: #fff;
+                }
+            
+                .fancy-input::placeholder {
+                    color: #bbb;
+                    font-style: italic;
+                }
+            
+                /* Fancy Save Button */
+                .btn-save {
+                    padding: 10px 20px; /* Slightly smaller button */
+                    font-size: 14px;
+                    font-weight: bold;
+                    background: linear-gradient(45deg, #6a11cb, #2575fc);
+                    color: white;
+                    border: none;
+                    border-radius: 20px;
+                    cursor: pointer;
+                    transition: transform 0.2s ease, box-shadow 0.3s ease;
+                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+                    text-transform: uppercase;
+                }
+            
+                .btn-save:hover {
+                    transform: translateY(-3px);
+                    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+                }
+            
+                .btn-save:active {
+                    transform: translateY(0);
+                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+                }
+            
+                /* Fancy Cancel Button */
+                .btn-cancel {
+                    padding: 10px 20px; /* Slightly smaller button */
+                    font-size: 14px;
+                    font-weight: bold;
+                    background-color: #f44336;
+                    color: white;
+                    border: none;
+                    border-radius: 20px;
+                    cursor: pointer;
+                    transition: background-color 0.3s ease, transform 0.2s ease;
+                }
+            
+                .btn-cancel:hover {
+                    background-color: #d32f2f;
+                    transform: translateY(-3px);
+                }
+            
+                .btn-cancel:active {
+                    transform: translateY(0);
+                }
+            </style>
+            
+            <button type="submit" class="save-btn">Save</button>
+        </form>
+    </div>
+
+    <div class="footer">
+        <a href="tasks.html" class="footer-icon" aria-label="Back">
+            <i class="fas fa-arrow-left"></i>
+            <span>Back</span>
+        </a>
+    </div>
+
+    <!-- Modal for User Selection -->
+    <div class="modal" id="userModal">
+        <div class="modal-content">
+            <h3>Choose User</h3>
+            <ul id="userList">
+                <!-- Users will be dynamically populated here -->
+            </ul>
+            <button class="close-btn" id="closeUserModal">Close</button>
+        </div>
+    </div>
+
+    <!-- Modal for Room -->
+    <div class="modal" id="roomModal">
+        <div class="modal-content">
+            <h3>Choose Room</h3>
+            <ul>
+                <li data-value="Entire Home">Entire Home</li>
+                <li data-value="Living Room">Living Room</li>
+                <li data-value="Bedroom">Bedroom</li>
+                <li data-value="Kitchen">Kitchen</li>
+                <li data-value="Bathroom">Bathroom</li>
+                <li data-value="Laundry">Laundry</li>
+                <li data-value="Garden">Garden</li>
+                <li data-value="Outside">Outside</li>
+                <li data-value="Other">Other</li>
+            </ul>
+            <button class="close-btn" id="closeRoomModal">Close</button>
+        </div>
+    </div>
+
+    <!-- Modal for Repeat -->
+    <div class="modal" id="repeatModal">
+        <div class="modal-content">
+            <h3>Choose Repeat</h3>
+            <ul>
+                <li data-value="Daily">Daily</li>
+                <li data-value="Weekly">Weekly</li>
+                <li data-value="Monthly">Monthly</li>
+            </ul>
+            <button class="close-btn" id="closeRepeatModal">Close</button>
+        </div>
+    </div>
+
+    <!-- Modal for Settings -->
+    <div class="modal" id="settingsModal">
+        <div class="modal-content">
+            <h3>Choose Settings</h3>
+            <ul>
+                <li data-value="Rotation">Rotation</li>
+                <li data-value="Team Work">Team Work</li>
+                <li data-value="Individual">Individual</li>
+            </ul>
+            <button class="close-btn" id="closeSettingsModal">Close</button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+        // Load users from localStorage and populate the user modal
+        const userModal = document.getElementById("userModal");
+        const assignedToDisplay = document.getElementById("assignedToDisplay");
+        const userList = document.getElementById("userList");
+        const assignedToSelection = document.getElementById("assignedToSelection");
+
+        // Load users from localStorage
+        const users = JSON.parse(localStorage.getItem("users")) || [];
+
+        // Populate the modal with users
+        users.forEach(user => {
+            const li = document.createElement("li");
+            li.textContent = user;
+            li.dataset.value = user;
+            li.addEventListener("click", () => {
+                // Add/remove user from the assignedTo list
+                let assignedToUsers = assignedToSelection.value ? assignedToSelection.value.split(', ') : [];
+                const userIndex = assignedToUsers.indexOf(user);
+                if (userIndex === -1) {
+                    assignedToUsers.push(user);
+                } else {
+                    assignedToUsers.splice(userIndex, 1);
+                }
+                assignedToSelection.value = assignedToUsers.join(', ');
+                if (assignedToUsers.length > 0) {
+                      assignedToDisplay.textContent = `Assigned to: ${assignedToUsers.join(', ')}`;
+                 } else {
+                       assignedToDisplay.textContent = 'Select users'; // Revert text when no users are selected
+                 }
+             });
+              userList.appendChild(li);
+        });
+
+        // Show the modal when the "Assigned to" section is clicked
+        assignedToDisplay.addEventListener("click", () => {
+            userModal.style.display = 'flex';
+        });
+
+        // Close the modal
+        document.getElementById("closeUserModal").addEventListener("click", () => {
+            userModal.style.display = 'none';
+        });
+
+        // Other modal setup and functionality (for Room, Repeat, Settings, etc.) remains the same.
+        // You can use the same logic to handle modals for Room, Repeat, and Settings.
+
+        // Reward Modal Logic
+const rewardModal = document.getElementById("rewardModal");
+const selectRewardButton = document.getElementById("selectReward");
+const rewardValueInput = document.getElementById("RewardValue");
+const rewardInput = document.getElementById("rewardInput");
+const saveRewardButton = document.getElementById("saveRewardBtn");
+const closeRewardButton = document.getElementById("closeRewardModal");
+
+// Open Reward Modal
+selectRewardButton.addEventListener("click", () => {
+    rewardModal.style.display = "flex";
+});
+
+// Save Reward and Update Display
+saveRewardButton.addEventListener("click", () => {
+    const reward = rewardInput.value;
+    if (reward) {
+        rewardValueInput.value = reward;
+        selectRewardButton.textContent = `Reward: ${reward} 💎`;
+    }
+    rewardModal.style.display = "none";
+});
+
+// Close Reward Modal
+closeRewardButton.addEventListener("click", () => {
+    rewardModal.style.display = "none";
+});
+
+
+        function setupModal(modalId, buttonId, inputId) {
+            const modal = document.getElementById(modalId);
+            const button = document.getElementById(buttonId);
+            const input = document.getElementById(inputId);
+            const closeButton = modal.querySelector('.close-btn');
+
+            button.addEventListener('click', () => {
+                modal.style.display = 'flex';
+            });
+
+            closeButton.addEventListener('click', () => {
+                modal.style.display = 'none';
+            });
+
+            modal.addEventListener('click', (e) => {
+                if (e.target.tagName === 'LI') {
+                    input.value = e.target.getAttribute('data-value');
+                    button.textContent = e.target.getAttribute('data-value');
+                    modal.style.display = 'none';
+                }
+            });
+        }
+
+        setupModal('roomModal', 'selectRoom', 'roomSelection');
+        setupModal('repeatModal', 'selectRepeat', 'repeatSelection');
+        setupModal('settingsModal', 'selectSettings', 'settingsSelection');
+
+        // Date picker logic
+        const dateDisplay = document.getElementById("dateDisplay");
+        const dateInput = document.getElementById("taskDate");
+
+        const flatpickrInstance = flatpickr(dateInput, {
+            dateFormat: "Y-m-d",
+            defaultDate: "today",
+            onChange: function(selectedDates, dateStr) {
+                dateDisplay.textContent = dateStr; // Update display
+            },
+            positionElement: dateDisplay, // Ensure correct positioning
+        });
+
+        dateDisplay.addEventListener("click", () => {
+            flatpickrInstance.open();
+        });
+
+        // Reminder toggle logic
+        const reminderToggle = document.getElementById('taskReminder');
+        const addAlarmBtn = document.getElementById('addAlarmBtn');
+        const alarmContainer = document.getElementById('alarmContainer');
+        let alarms = [];
+
+        reminderToggle.addEventListener('change', () => {
+            if (reminderToggle.checked) {
+                addAlarmBtn.style.display = 'inline-block';
+            } else {
+                addAlarmBtn.style.display = 'none';
+                alarmContainer.innerHTML = '';
+                alarms = [];
+            }
+        });
+
+        addAlarmBtn.addEventListener('click', () => {
+            const alarmWrapper = document.createElement('div');
+            alarmWrapper.style.marginBottom = '10px';
+            alarmWrapper.style.display = 'flex';
+            alarmWrapper.style.alignItems = 'center';
+
+            const alarmInput = document.createElement('input');
+            alarmInput.type = 'time';
+            alarmInput.style.marginRight = '10px';
+            alarmInput.style.padding = '10px';
+            alarmInput.style.border = '1px solid #ddd';
+            alarmInput.style.borderRadius = '5px';
+
+            const removeButton = document.createElement('button');
+            removeButton.textContent = 'Remove';
+            removeButton.style.padding = '5px 10px';
+            removeButton.style.backgroundColor = 'red';
+            removeButton.style.color = 'white';
+            removeButton.style.border = 'none';
+            removeButton.style.borderRadius = '5px';
+
+            removeButton.addEventListener('click', () => {
+                alarmWrapper.remove();
+                alarms = alarms.filter(a => a !== alarmInput.value);
+            });
+
+            alarmInput.addEventListener('input', () => {
+                if (!alarms.includes(alarmInput.value)) {
+                    alarms.push(alarmInput.value);
+                }
+            });
+
+            alarmWrapper.appendChild(alarmInput);
+            alarmWrapper.appendChild(removeButton);
+            alarmContainer.appendChild(alarmWrapper);
+        });
+
+        // Form submit event
+        document.getElementById('addTaskForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const repeatSelectionValue = document.getElementById('repeatSelection').value;
+            const frequencyValue = document.getElementById('frequencyInput').value;
+
+            console.log('Task submitted with repeat:', repeatSelectionValue);
+            console.log('Frequency per period:', frequencyValue);
+            console.log('Assigned to:', assignedToSelection.value);
+            console.log('Task submitted with alarms:', alarms);
+        });
+
+        // Prevent the reward save button from submitting the form
+saveRewardButton.addEventListener("click", (event) => {
+    event.preventDefault(); // Prevent form submission
+    const reward = rewardInput.value;
+    if (reward) {
+        rewardValueInput.value = reward;
+        selectRewardButton.textContent = `Reward: ${reward} 💎`;
+    }
+    rewardModal.style.display = "none";
+});
+
+// Form submit event to save the task
+document.getElementById("addTaskForm").addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        const title = document.getElementById("taskTitle").value.trim();
+        const notes = document.getElementById("taskNotes").value.trim();
+        const room = document.getElementById("roomSelection").value;
+        const repeat = document.getElementById("repeatSelection").value;
+        const settings = document.getElementById("settingsSelection").value;
+        const date = document.getElementById("taskDate").value;
+        const reminder = document.getElementById("taskReminder").checked;
+        const users = document.getElementById("assignedToSelection").value.split(", ");
+        const reward = document.getElementById("RewardValue").value;
+
+        if (!title) {
+            alert("Task title is required!");
+            return;
+        }
+
+        // Retrieve existing tasks or initialize an empty array
+        const tasks = JSON.parse(localStorage.getItem("familyApp_tasks")) || [];
+
+        // Add new task
+        tasks.push({ title, notes, room, repeat, settings, date, reminder, users, reward });
+
+        // Save back to localStorage
+        localStorage.setItem("familyApp_tasks", JSON.stringify(tasks));
+
+        alert("Task saved successfully!");
+
+        // Redirect to tasks.html
+        window.location.href = "tasks.html";
+});
+    </script>
+</body>
+</html>
