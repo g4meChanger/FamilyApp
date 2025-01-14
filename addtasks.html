@@ -289,12 +289,6 @@
     font-weight: bold;  /* Bold text for better visibility */
 }
 
-#taskDate {
-    visibility: hidden; /* Use visibility to hide while keeping it interactive */
-    position: absolute; /* Keep it out of view */
-}
-
-
     </style>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
@@ -674,26 +668,25 @@ closeRewardButton.addEventListener("click", () => {
         setupModal('repeatModal', 'selectRepeat', 'repeatSelection');
         setupModal('settingsModal', 'selectSettings', 'settingsSelection');
 
-      // Date picker logic
-      const dateDisplay = document.getElementById("dateDisplay");
-const dateInput = document.getElementById("taskDate");
 
-const flatpickrInstance = flatpickr(dateInput, {
-    dateFormat: "m-d-Y",  // Set date format
-    defaultDate: "today", // Set default date to today
-    onChange: function(selectedDates, dateStr) {
-        dateInput.value = dateStr; // Set the value of the hidden input
-        dateDisplay.textContent = dateStr; // Update the display with the selected date
-    },
-    positionElement: dateDisplay, // Ensure correct positioning of the calendar
-    disableMobile: false, // Allow date picker on mobile devices
-});
+          // Initialize flatpickr for the hidden date input
+    const taskDateInput = document.getElementById("taskDate");
+    const dateDisplay = document.getElementById("dateDisplay");
 
-// Open the date picker when the dateDisplay button is clicked
-dateDisplay.addEventListener("click", function () {
-    flatpickrInstance.open();
-});
+    // Initialize flatpickr
+    flatpickr(taskDateInput, {
+        dateFormat: "Y-m-d", // Format of the date (e.g., 2023-01-01)
+        defaultDate: new Date(), // Set default date to today
+        onChange: (selectedDates, dateStr) => {
+            // Update the displayed date when a new date is selected
+            dateDisplay.textContent = dateStr;
+        }
+    });
 
+    // Show the date picker when the date display is clicked
+    dateDisplay.addEventListener("click", () => {
+        taskDateInput.click(); // Trigger the hidden input's click event
+    });
 
 
         // Reminder toggle logic
