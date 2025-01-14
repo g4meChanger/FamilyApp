@@ -329,7 +329,7 @@
             <div class="form-group">
                 <label>Date</label>
                 <div id="dateDisplay" class="date-display">Today</div>
-                <input type="date" id="taskDate" class="date-input">
+                <input type="text" id="taskDate" style="display:none;" />
             </div>
             <div class="form-group">
                 <label>Reminder</label>
@@ -668,25 +668,24 @@ closeRewardButton.addEventListener("click", () => {
         setupModal('repeatModal', 'selectRepeat', 'repeatSelection');
         setupModal('settingsModal', 'selectSettings', 'settingsSelection');
 
+      // Date picker logic
+        // Initialize Flatpickr on the hidden date input
+flatpickr("#taskDate", {
+    altInput: true,
+    altFormat: "F j, Y", // Display format
+    dateFormat: "Y-m-d", // Value format (for storing in hidden input)
+    defaultDate: "today",
+    onChange: function(selectedDates, dateStr, instance) {
+        // Update the visible date display
+        document.getElementById("dateDisplay").textContent = dateStr;
+    }
+});
 
-          // Initialize flatpickr for the hidden date input
-    const taskDateInput = document.getElementById("taskDate");
-    const dateDisplay = document.getElementById("dateDisplay");
+// Add a click event to the visible date display to open the date picker
+document.getElementById("dateDisplay").addEventListener("click", () => {
+    document.getElementById("taskDate")._flatpickr.open();
+});
 
-    // Initialize flatpickr
-    flatpickr(taskDateInput, {
-        dateFormat: "Y-m-d", // Format of the date (e.g., 2023-01-01)
-        defaultDate: new Date(), // Set default date to today
-        onChange: (selectedDates, dateStr) => {
-            // Update the displayed date when a new date is selected
-            dateDisplay.textContent = dateStr;
-        }
-    });
-
-    // Show the date picker when the date display is clicked
-    dateDisplay.addEventListener("click", () => {
-        taskDateInput.click(); // Trigger the hidden input's click event
-    });
 
 
         // Reminder toggle logic
